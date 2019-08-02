@@ -1,6 +1,7 @@
 import boto3
 import StringIO
 import zipfile
+import datetime
 
 def lambda_handler(event, context):
 
@@ -17,5 +18,11 @@ def lambda_handler(event, context):
                  obj = myzip.open(nm)
                  portfolio_bucket.upload_fileobj(obj, nm)
 
+
+    sns = boto3.resource('sns')
+    topic = sns.Topic('arn:aws:sns:eu-north-1:539076042504:deployPortfolioTopic')
+    now = datetime.now()
+
+    topic.publish(Subject="Portfolio deployed", Message="Portofolio deployed (%s)" % now)
 
     return 'Hello from lambda'
