@@ -1,6 +1,7 @@
 import boto3
 import StringIO
 import zipfile
+import mimetypes
 from datetime import datetime
 
 def lambda_handler(event, context):
@@ -19,7 +20,8 @@ def lambda_handler(event, context):
         with zipfile.ZipFile(portfolio_zip) as myzip:
              for nm in myzip.namelist():
                      obj = myzip.open(nm)
-                     portfolio_bucket.upload_fileobj(obj, nm)
+                     portfolio_bucket.upload_fileobj(obj, nm,
+                       ExtraArgs={'ContentType': mimetypes.guess_type(nm)[0]})
 
         print "Job done!"
         now = datetime.now()
